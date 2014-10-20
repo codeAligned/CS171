@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ -e phong ]
+then
+    echo "directory phong  exists"
+else
+    mkdir phong
+fi
+
+files=`ls hw3-data/*.iv`
+for i in $files
+do
+    base=`basename $i .iv`
+    echo "shaded 2 400 400 < $i 1> phong/$base.ppm 2> phong/$base.debug"
+    shaded 2 400 400 < $i 1> phong/$base.ppm 2> phong/$base.debug
+done

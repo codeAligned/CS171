@@ -1,0 +1,94 @@
+/* Parses records containing a number and zero or more subrecords */
+%{
+#include <stdint.h>
+#include <FlexLexer.h>
+#include <string>
+#include <list>
+#include <vector>
+#include <iostream>
+#include "matrix.h"
+#include "data.h"
+
+using namespace std;
+
+int yyerror(const char *s);
+int yylex();
+
+vector<Polyline> result;
+struct Polyline poly;
+
+%}
+
+%union
+{
+    double ival;
+}
+
+%defines
+
+%token <ival> NUM
+%token POLYTOK
+
+
+%%
+
+/* The input file consists of a list of zero or more records. */
+file : 
+     | file polyline 
+;
+
+polyline:
+      POLYTOK 
+      |
+      POLYTOK points
+      {
+        result.push_back(poly);  // push back 1 polyline
+        poly.points.clear();  
+      }
+
+points:
+      point   /* can take 1 point */
+      |
+      points point  /* or recursive rule to handle more than 1 point */
+      ;
+
+point:
+      NUM NUM
+      {
+        struct Point p;  /* create a Point out of the 2 doubles */
+        p.x = $1;
+        p.y = $2;
+        poly.points.push_back(p); 
+      }
+
+
+%%
+
+static FlexLexer *lexer;
+
+int yyerror(const char * s)
+{
+   cerr << "Parse error: " << s << endl;
+   return 0;
+}
+
+int yylex()
+{
+   return lexer->yylex();
+}
+
+vector<Polyline> &parse_test(istream &datafile)
+{
+
+   // Construct the lexer.
+   lexer = new yyFlexLexer(&datafile);
+   // Run the parser.
+   if(yyparse())
+   {
+       cerr << "Parse failed!" << endl;
+       exit(1);
+   }
+
+   delete lexer;
+   return result;
+}

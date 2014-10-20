@@ -1,0 +1,16 @@
+
+Type "make" to compile. 
+
+PROGRAM: draw2d
+
+Usage: ./draw2d [xmin] [xmax] [ymin] [ymax] [xRes] [yRes]
+
+This program takes many polylines (consisting of any number of points between
+xmin and xmax, and ymin and ymax, and then draws those lines in white).
+
+To read in a file to be parsed intead of user input, pass a file in as follows:
+./draw2d -1.5 1.5 -1.5 1.5 400 400 < ../hw1_data-1/nonagons-box.2d
+
+To save the output PPM format to a file instead of cout, send to a file as follows:
+./draw2d -1.5 1.5 -1.5 1.5 400 400 < ../hw1_data-1/nonagons-box.2d > nonagaons-box.ppm
+(Note: could also pipe to display or convert instead of saving to a file)

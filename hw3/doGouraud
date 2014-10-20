@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ -e gouraud ]
+then
+    echo "directory gouraud  exists"
+else
+    mkdir gouraud
+fi
+
+files=`ls hw3-data/*.iv`
+for i in $files
+do
+    base=`basename $i .iv`
+    echo "shaded 1 400 400 < $i 1> gouraud/$base.ppm 2> gouraud/$base.debug"
+    shaded 1 400 400 < $i 1> gouraud/$base.ppm 2> gouraud/$base.debug
+done

@@ -1,0 +1,8 @@
+75
+Frame 30
+translation 5 0 0
+rotation 0 0 0 0
+scale 1 1 1
+Frame 60
+translation 0 5 5
+scale 1 1 1

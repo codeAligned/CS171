@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ -e flat ]
+then
+    echo "directory flat exists"
+else
+    mkdir flat
+fi
+
+files=`ls hw3-data/*.iv`
+for i in $files
+do
+    base=`basename $i .iv`
+    echo "shaded 0 400 400 < $i 1> flat/$base.ppm 2> flat/$base.debug"
+    shaded 0 400 400 < $i 1> flat/$base.ppm 2> flat/$base.debug
+done

@@ -1,0 +1,424 @@
+/* Parses records containing a number and zero or more subrecords */
+%{
+#include <stdint.h>
+#include <FlexLexer.h>
+#include <string>
+#include <list>
+#include <vector>
+#include <iostream>
+#include "matrix.h"
+#include "data.h"
+
+using namespace std;
+
+int yyerror(const char *s);
+int yylex();
+
+vector<Block> result;
+Block block;
+CameraBlock camera;
+SeparatorBlock separator;
+
+struct Transform transformSet;
+struct Coordinate3 coordinates;
+struct IndexedFaceSet faceset;
+struct IndexedFaceLines faceline;
+struct Light light;
+
+
+%}
+
+%union
+{
+    double ival;
+    struct Vector3 vect3;
+    struct Vector4 vect4;
+}
+
+%defines
+
+%token <ival> NUM
+%token PCAMERA
+%token POS
+%token ORIENT
+%token NDIST
+%token FDIST
+%token LEFT
+%token RIGHT
+%token TOP
+%token BOTTOM
+%token SEPARATOR
+%token TRANSFORM
+%token COORD3
+%token POINT
+%token IFACESET
+%token TRANSLATE
+%token SCALEFACTOR
+%token ROTATION
+%token COORDINDEX
+%token POINTLIGHT
+%token LOCATION
+%token COLOR
+%token MATERIAL
+%token AMBIENT
+%token DIFFUSE
+%token SPECULAR
+%token SHININESS
+%token NORMAL
+%token VECTOR
+%token NORMALINDEX
+%token COMMA
+%token LBRACE
+%token RBRACE
+%token LBRACKET
+%token RBRACKET
+
+%type <ival> single
+%type <vect3> triple
+%type <vect4> quad
+
+
+
+%%
+
+/* The input file consists of a list of zero or more blocks. */
+file : 
+     | file block 
+;
+
+block:
+      camerablock
+      {
+        block.blockType = 0;
+        block.camera = camera;
+        result.push_back(block);
+      }
+      |
+      sepblock
+      {
+        block.blockType = 1;
+        block.separator = separator;
+        result.push_back(block);
+        separator.transforms.clear();
+        separator.points.clear();
+        separator.indices.clear();
+        separator.normals.clear();
+        separator.normalIndices.clear();
+      }
+      |
+      lightblock
+      {
+        block.blockType = 2;
+        block.light = light;
+        result.push_back(block);
+      }
+      ;
+
+camerablock:
+      PCAMERA open cameralines close  /* can take 1 or more cameralines */
+      ;
+
+cameralines:
+      cameraline   /* can take 1 cameraline */
+      |
+      cameralines cameraline  /* or recursive rule to handle more than 1 cameraline */
+      ;
+
+cameraline:
+      POS triple 
+      {
+        camera.position = $2;
+      }
+      |
+      ORIENT quad
+      {
+        camera.orientation = $2;
+      }
+      |
+      NDIST NUM
+      {
+        camera.nearDistance = $2;
+      }
+      |
+      FDIST NUM
+      {
+        camera.farDistance = $2;
+      }
+      |
+      LEFT NUM
+      {
+        camera.left = $2;
+      }
+      |
+      RIGHT NUM
+      {
+        camera.right = $2;
+      }
+      |
+      TOP NUM
+      {
+        camera.top = $2;
+      }
+      | 
+      BOTTOM NUM
+      {
+        camera.bottom = $2;
+      }
+      ;
+
+lightblock:
+      POINTLIGHT open LOCATION NUM NUM NUM COLOR NUM NUM NUM close  /* PointLight has location and color */
+      {
+        light.location.x = $4;
+        light.location.y = $5;
+        light.location.z = $6;
+        light.color.x = $8;
+        light.color.y = $9;
+        light.color.z = $10;
+      }
+      ;
+
+sepblock:
+      SEPARATOR open sepitems close  /* can take 1 point */
+      ;
+
+sepitems:
+      sepitem  /* can take 1 sepitem */
+      |
+      sepitems sepitem  /* or recursive rule to handle more than 1 sepitem */
+      ;
+
+sepitem:
+      TRANSFORM open translines close
+      {
+        separator.transforms.push_back(transformSet);
+        transformSet.transformations.clear();
+      }
+      |
+      COORD3 open POINT sqopen triples sqclose close
+      {
+        separator.points.push_back(coordinates);
+        coordinates.points.clear();
+      }
+      |
+      IFACESET open ifslines close
+      {
+        separator.indices.push_back(faceset);
+        faceset.lines.clear();
+      }
+      |
+      MATERIAL open materialLines close
+      |
+      NORMAL open VECTOR sqopen triplesNormal sqclose close
+      ;
+
+translines:
+      transline  /* can take 1 transline */
+      |
+      translines transline  /* or recursive rule to handle more than 1 transline */
+      ;
+
+transline:
+      TRANSLATE triple
+      {
+        struct TransformCommand cmd;
+        cmd.transformation = "T";
+        cmd.data.push_back($2.x);
+        cmd.data.push_back($2.y);
+        cmd.data.push_back($2.z);
+        transformSet.transformations.push_back(cmd);
+      }
+      |
+      SCALEFACTOR triple
+      {
+        struct TransformCommand cmd;
+        cmd.transformation = "S";
+        cmd.data.push_back($2.x);
+        cmd.data.push_back($2.y);
+        cmd.data.push_back($2.z);
+        transformSet.transformations.push_back(cmd);
+      }
+      |
+      ROTATION quad
+      {
+        struct TransformCommand cmd;
+        cmd.transformation = "R";
+        cmd.data.push_back($2.x);
+        cmd.data.push_back($2.y);
+        cmd.data.push_back($2.z);
+        cmd.data.push_back($2.w);
+        transformSet.transformations.push_back(cmd);
+      }
+      ;
+
+ifslines:
+      ifsline  /* can take 1 ifsline */
+      |
+      ifslines ifsline  /* or recursive rule to handle more than 1 ifsline */
+      ;
+
+ifsline:
+      COORDINDEX sqopen singles sqclose
+      {
+        faceset.lines.push_back(faceline);
+        faceline.indices.clear();
+      }
+      |
+      NORMALINDEX sqopen singlesNormal sqclose
+      ;
+
+materialLines:
+      materialLine  /* can take 1 materialLine */
+      |
+      materialLines materialLine /* or recursive rule to handle more than 1 materialLine */
+      ;
+
+materialLine:
+      AMBIENT NUM NUM NUM
+      {
+        separator.material.ambient.x = $2;
+        separator.material.ambient.y = $3;
+        separator.material.ambient.z = $4;
+      }
+      |
+      DIFFUSE NUM NUM NUM
+      {
+        separator.material.diffuse.x = $2;
+        separator.material.diffuse.y = $3;
+        separator.material.diffuse.z = $4;
+      }
+      |
+      SPECULAR NUM NUM NUM
+      {
+        separator.material.specular.x = $2;
+        separator.material.specular.y = $3;
+        separator.material.specular.z = $4;
+      }
+      |
+      SHININESS NUM
+      {
+        separator.material.shininess= $2;
+      }
+      ;
+
+single:
+      NUM   /* a single consists of 1 real number */
+      {
+      $$ = $1;
+      }
+      ;
+
+singles:
+      single
+      {
+        faceline.indices.push_back($1);
+      }
+      |
+      singles COMMA single
+      {
+        faceline.indices.push_back($3);
+      }
+      ;
+
+singlesNormal:
+      single
+      {
+        separator.normalIndices.push_back($1);
+      }
+      |
+      singlesNormal COMMA single
+      {
+        separator.normalIndices.push_back($3);
+      }
+      ;
+
+triple:
+      NUM NUM NUM   /* a triple consists of 3 real numbers */
+      {
+        $$.x = $1;
+        $$.y = $2;
+        $$.z = $3;
+      }
+      ;
+
+triples:
+      triple
+      {
+        coordinates.points.push_back($1);
+      }
+      |
+      triples COMMA triple
+      {
+        coordinates.points.push_back($3);
+      }
+      ;
+
+triplesNormal:
+      triple
+      {
+        separator.normals.push_back($1);
+      }
+      |
+      triplesNormal COMMA triple
+      {
+        separator.normals.push_back($3);
+      }
+      ;
+
+quad:
+      NUM NUM NUM NUM  /* a quad consists of 4 real numbers */
+      {
+      $$.x = $1;
+      $$.y = $2;
+      $$.z = $3;
+      $$.w = $4;
+      }
+      ;
+
+open:
+      LBRACE  /* open is an open curly brace */
+      ;
+
+close:
+      RBRACE  /* close is an closed curly brace */
+      ;
+
+sqopen:
+      LBRACKET  /* sqopen is an open bracket */
+      ;
+
+sqclose:
+      RBRACKET  /* sqclose is an closed bracket */
+      ;
+
+
+%%
+
+static FlexLexer *lexer;
+
+int yyerror(const char * s)
+{
+   cerr << "Parse error: " << s << endl;
+   return 0;
+}
+
+int yylex()
+{
+   return lexer->yylex();
+}
+
+vector<Block> &parse_test(istream &datafile)
+{
+
+   // Construct the lexer.
+   lexer = new yyFlexLexer(&datafile);
+   // Run the parser.
+   if(yyparse())
+   {
+       cerr << "Parse failed!" << endl;
+       exit(1);
+   }
+
+   delete lexer;
+   return result;
+}

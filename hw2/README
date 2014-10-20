@@ -1,0 +1,16 @@
+
+Type "make" to compile. 
+
+PROGRAM: wireframe
+
+Usage: ./wireframe [xRes] [yRes]
+
+This program takes the size of the image to be created, and parses Camera and Separator
+blocks to create the resulting ppm, which is outputed to cout.
+
+To read in a file to be parsed intead of user input, pass a file in as follows:
+./wireframe 400 400 < hw2-data/fourCubes.iv
+
+To save the output PPM format to a file instead of cout, send to a file as follows:
+./wireframe 400 400 < hw2-data/fourCubes.iv > fourCubes.ppm
+(Note: could also pipe to display or convert instead of saving to a file)

@@ -1,0 +1,95 @@
+
+Type "make" to compile.
+
+PROGRAM: testMatrix
+
+Usage: ./testMatrix
+
+This program goes through a series of test to confirm that the matrix library in 
+matrix.h works correctly
+
+Result of tests:
+Creating a 4x4 matrix...
+A=
+[         0          2          3          4]
+[      1.23          6          7          8]
+[         9         10         10         12]
+[        13         14         15         16]
+ 
+TESTING SCALAR MULTIPICATION!
+B = 3 * A
+B=
+[         0          6          9         12]
+[      3.69         18         21         24]
+[        27         30         30         36]
+[        39         42         45         48]
+ 
+TESTING MATRIX MULTIPICATION!
+C = A * B
+C=
+[    244.38        294        312        348]
+[    523.14     661.38     707.07     794.76]
+[     774.9       1038       1131       1284]
+[   1080.66       1452       1581       1800]
+ 
+Creating a 4x1 Vector
+D=
+[         3]
+[         2]
+[         1]
+[         0]
+ 
+TESTING MATRIX * VECTOR MULTIPLICATION!
+E = A * D
+E=
+[         7]
+[     22.69]
+[        57]
+[        82]
+ 
+TESTING DOT PRODUCT!
+Dot Product of E and D = 123.38
+ 
+TESTING MATRIX TRANSPOSE!
+Atrans = Tranpose of A
+Atrans=
+[         0       1.23          9         13]
+[         2          6         10         14]
+[         3          7         10         15]
+[         4          8         12         16]
+ 
+TESTING MATRIX INVERSE!
+AtransInv = Inverse of Atrans
+AtransInv=
+[  0.214823   -1.33459   0.404941   0.613588]
+[ -0.322234    0.75188  -0.107411  -0.295381]
+[         0        0.5         -1        0.5]
+[  0.107411  -0.417293    0.70247  -0.318206]
+ 
+TESTING MATRIX INVERSE MULTIPLIED BY MATRIX!
+AtransXinv = Atrans * AtransInv
+(Note that this should be the unit matrix)
+AtransXinv=
+[         1          0 1.77636e-15          0]
+[-2.22045e-16          1          0          0]
+[         0 -8.88178e-16          1          0]
+[-2.22045e-16 -8.88178e-16 1.77636e-15          1]
+(Note that we have at least 15 digits of accurate precision in this case)
+ 
+TESTING MATRIX ADDITION!
+F = A + B
+F=
+[         0          8         12         16]
+[      4.92         24         28         32]
+[        36         40         40         48]
+[        52         56         60         64]
+ 
+TESTING MATRIX SCALAR MULTIPLICATION!
+G = 3 * F
+G=
+[         0         24         36         48]
+[     14.76         72         84         96]
+[       108        120        120        144]
+[       156        168        180        192]
+
+

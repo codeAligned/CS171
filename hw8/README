@@ -1,0 +1,26 @@
+
+To compile this program, simple type "make". (or if on OSX update the Makefile
+LDFLAGS line accordingly).
+
+This will create an executable called "glslRenderer".
+
+PROGRAM: glslRenderer
+
+Usage: ./glslRenderer xRes yRes
+
+For example, run as follows:
+./glslRenderer 600 600
+
+The program reads in a sky and leaf .png files, and uses a vertex shader and 
+fragment shader to animate a water surface with leaves on top.  We start in the
+default "per-vertex" mode, where the normals are calculated per vertex.
+Pressing 'w' toggles to the "per-fragment" mode, where the normal is calculated
+at every fragment, and thus should give a smoother surface.
+
+UI 
+--------------------------------------------------------------------
+'w': toggle between 'per-vertex' and 'per-fragment' modes for calculating normals.
+
+Click and drag to rotate the plane.
+
+Exit the program with 'q', 'Q', or the Esc key.

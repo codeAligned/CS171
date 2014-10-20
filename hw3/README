@@ -1,0 +1,32 @@
+
+Type "make" to compile. 
+
+PROGRAM: shaded
+
+Usage: ./shaded n [xRes] [yRes]
+
+This program takes n (the shading mode; 0 = Flat, 1 = Gouraud, 2 = Phong) and
+the size of the image to be created, and parses Camera and Separator
+blocks to create the resulting ppm, which is outputed to cout.
+
+To read in a file to be parsed intead of user input, pass a file in as follows:
+shaded 0 400 400 < hw3-data/lion1.iv
+
+To save the output PPM format to a file instead of cout, send to a file as 
+follows: shaded 0 400 400 < hw3-data/lion1.iv > out.ppm
+(Note: could also pipe to display or convert instead of saving to a file)
+
+In addition, 3 scripts are provided that will produce .ppm files for each 
+available .iv file in /hw3-data.
+./doFlat - 
+    Produces a .ppm with Flat lighting for each .iv file.  Stores these .ppm 
+    files in the directory flat, (corresponding .debug outputs are created
+    and store anything that goes to std::cerr).
+./doGouraud - 
+    Produces a .ppm with Gouraud lighting for each .iv file.  Stores these 
+    .ppm files in the directory gouraud, (corresponding .debug outputs are 
+    created and store anything that goes to std::cerr).
+./doPhong - 
+    Produces a .ppm with Phong lighting for each .iv file.  Stores these .ppm 
+    files in the directory phong, (corresponding .debug outputs are created
+    and store anything that goes to std::cerr).

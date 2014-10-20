@@ -1,0 +1,13 @@
+Type "make" to compile. 
+
+PROGRAM: transform4x4
+
+Usage: .transform4x4
+
+To read in a file to be parsed intead of user input, pass a file in as follows:
+./transform4x4 < ../hw1_data-1/transform1.tf 
+
+The output will be the resulting transformed matrix, and will be sent to std::cout.
+We take the identity 4x4 matrix and apply each transformation that is parsed from input
+in order, to result in the final 4x4 transform matrix.  Note that we do not allow
+rotation around (0,0,0).

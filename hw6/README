@@ -1,0 +1,53 @@
+
+To compile this program, simple type "make" (or if on OSX, uncomment the correct 
+CXXFLAGS and LDFLAGS lines in the Makefile). Also, make sure we can use -lpng, 
+since we need it to read in the textures in .png format.
+
+This will create an executable called "oglTexRenderer".
+
+PROGRAM: oglTexRenderer
+
+Usage: ./oglTexRenderer xRes yRes < .iv file
+
+For example, run as follows:
+oglTexRenderer 400 400 < hw6-data/cube.iv
+
+The program will display every separator block in the .iv file (each block 
+contains and object and its associated texture as a .png file).  The textures 
+must all be in the hw-6 data directory in order to be loaded.  In addition, 
+we will display an animated water surface below the object (note that this 
+requires "sky.png" to be in your hw6-data directory).  The normals are 
+computed analytically, as it only depends on distance from the origin, 
+which gives the surface the ripple like effect.
+
+EXTRA CREDIT:
+----------------------------------------------------------------------------
+BACKGROUND:
+Added sky.png in the background so it looks like the sky is actually being 
+reflected.  This is implemented in drawBackDrop, as as we draw a rotated 
+gluCylinder around the object.
+'f': increase the speed of the ripples.
+'g': decrease the speed of the ripples. (Clamp to minimum of 0.0)
+
+
+UI Transformations:
+--------------------------------------------------------------------------
+Note: These are all left over from last time, and using them may reveal how 
+the sky backdrop is drawn as a cylinder and the reflection is just a 
+plane at y = -1.  To reset to the original camera position and orientation, 
+just press 'r'.
+
+SHIFT+LEFT drag: Zoom 
+    (Zoom implemented as a -z transformation based on the vertical drag)
+
+LEFT drag: Pan
+    (Panning implemented as a translation in x and y based on the horizontal 
+	and vertical drag)
+RIGHT drag: Rotate around the object 
+    (Rotation implemented as rotation around the axis that was dragged, with 
+    the angle proportional to the length of the drag)
+
+'r': Reset
+    reset the position and orientation of the camera to the original position.
+
+'q' or 'Esc': Exit

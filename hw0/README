@@ -1,0 +1,6 @@
+
+To compile this program, simple type "make" (or if on OSX, "make -f Makefile.macosx").
+
+This will create an executable called "hw0."  Run ./hw0 to see a blue sphere.
+
+Exit the program with 'q', 'Q', or the Esc key.

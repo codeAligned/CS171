@@ -1,0 +1,115 @@
+/* Parses records containing a number and zero or more subrecords */
+%{
+#include <stdint.h>
+#include <FlexLexer.h>
+#include <string>
+#include <list>
+#include <vector>
+#include <iostream>
+#include "matrix.h"
+#include "data.h"
+
+using namespace std;
+
+int yyerror(const char *s);
+int yylex();
+
+vector<Command> result;
+
+%}
+
+%union
+{
+    double ival;
+}
+
+%defines
+
+%token <ival> NUM
+%token TTOK
+%token RTOK
+%token STOK
+
+
+%%
+
+/* The input file consists of a list of zero or more records. */
+file : 
+     | file command 
+;
+
+command:
+      translate_command
+      |
+      rotate_command
+      |
+      scale_command
+      ;
+
+translate_command:
+      TTOK NUM NUM NUM
+      {
+        struct Command cmd;
+        cmd.transformation = "T";
+        cmd.data.push_back($2);
+        cmd.data.push_back($3);
+        cmd.data.push_back($4);
+        result.push_back(cmd);
+      }
+      ;
+
+rotate_command:
+      RTOK NUM NUM NUM NUM
+      {
+        struct Command cmd;
+        cmd.transformation = "R";
+        cmd.data.push_back($2);
+        cmd.data.push_back($3);
+        cmd.data.push_back($4);
+        cmd.data.push_back($5);
+        result.push_back(cmd);
+      }
+      ;
+
+scale_command:
+      STOK NUM NUM NUM
+      {
+        struct Command cmd;
+        cmd.transformation = "S";
+        cmd.data.push_back($2);
+        cmd.data.push_back($3);
+        cmd.data.push_back($4);
+        result.push_back(cmd);
+      }
+      ;
+
+%%
+
+static FlexLexer *lexer;
+
+int yyerror(const char * s)
+{
+   cerr << "Parse error: " << s << endl;
+   return 0;
+}
+
+int yylex()
+{
+   return lexer->yylex();
+}
+
+vector<Command> &parse_test(istream &datafile)
+{
+
+   // Construct the lexer.
+   lexer = new yyFlexLexer(&datafile);
+   // Run the parser.
+   if(yyparse())
+   {
+       cerr << "Parse failed!" << endl;
+       exit(1);
+   }
+
+   delete lexer;
+   return result;
+}

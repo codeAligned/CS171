@@ -1,0 +1,62 @@
+
+To compile this program, simple type "make" (or if on OSX, "make -f Makefile.macosx").
+
+This will create an executable called "editSpline".
+
+PROGRAM: oglRenderer
+
+Usage: ./editSpline xRes yRes [.iv file]
+
+For example, run as follows:
+./editSpline 400 400
+
+The program will display the control polyline (in white), which connects all 
+of the control points (in red).  In yellow, the spline is displayed, which is 
+calculated using the Cox de Boor algorithm.
+
+The program starts with a basic U shape with 4 control points, and a knot vector
+of <0,0,0,0,1,1,1,1>
+Press 'r' to reset the control points and polyline to the original U shape.
+
+Click on a red control points and drag it around to update the shape of the
+control polyline.  The control polyline and spline will be updated accordingly
+in real time.  
+Control-Click on the display of the spline (the yellow curve) to add a control 
+point (and thus a knot) that will keep the curve looking the same.  
+For example, if you click on a point 50% of the way along the curve, we will 
+add a knot value of 0.5 to the knot vector (inserting it such that the knot
+vector is still nondecreasing).  We then update the control points based 
+on the new knot vector and old control points.
+
+Exit the program with 'q', 'Q', or the Esc key.
+
+------------------------------------------------------------
+EXTRA CREDIT
+------------------------------------------------------------
+TOGGLE CONTROL POLYLINE:
+Press 'w' to toggle the control polyline on and off.  Note that no editing is 
+possible when the polyline is toggled off.  The program starts with the
+control polyline toggled on.
+
+LOAD/SAVE FEATURE:
+To use this feature, pass in a file name as the optional 3rd parameter.  The file
+will store data of the control points and the knot vector.
+If the file already exists, we load in the data and display the according spline.
+If the file doesn't exist, just start at the original U shape.
+Press 's' to save the control polyline and the knot vector to the specified file
+(the 3rd parameter).
+Example:
+./editSpline 400 400 splineData.txt
+to load data from splineData.txt.  When we press 's' to save, the control points and 
+knots will be saved to splineData.txt.
+
+File Format for load save feature (note that the string "Knot Vector:" acts as a 
+seperator betwen the control points and the knot vector values):
+ControlPoint1.x ControlPoint1.y
+ControlPoint2.x ControlPoint2.y
+...
+Knot Vector:
+knotVector[0]
+knotVector[1]
+knotVector[2]
+...

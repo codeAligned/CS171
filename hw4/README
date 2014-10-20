@@ -1,0 +1,13 @@
+
+To compile this program, simple type "make" (or if on OSX, "make -f Makefile.macosx").
+
+This will create an executable called "oglRenderer".
+
+PROGRAM: oglRenderer
+
+Usage: ./oglRenderer [xRes] [yRes] < [.iv file]
+
+For example, run as follows:
+oglRenderer 400 400 < hw4-data/cube2.iv
+
+Exit the program with 'q', 'Q', or the Esc key.

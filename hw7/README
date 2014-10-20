@@ -1,0 +1,42 @@
+
+To compile this program, simple type "make". (or if on OSX update the Makefile
+CXXFLAGS and LDFLAGS lines accordingly).
+
+This will create an executable called "keyframe".
+
+PROGRAM: keyframe
+
+Usage: ./keyframe script-file-name
+
+For example, run as follows:
+./keyframe hw7-data/sample.script
+
+The program reads in keyframes in the script file, and uses cubic interpolation
+to generate data for all the in-between frames.  We draw an I-bar near the 
+origin, making it easy to see the resulting animation taking place.
+
+UI for the Animation
+--------------------------------------------------------------------
+'p': play the animation
+'s': stop the playback
+'f': move forward one frame
+'r': go backward one frame
+'l': toggle looping mode on/off.  If looping mode is enabled, playback will go 
+	back to frame 0 after it gets to the last frame.
+'j' + NUM + 'Enter': Hit J and then type a number and hit enter to jump to 
+	that frame.
+'0': go to frame 0
+
+Extra commands:
+'w': toggle the X,Y,Z axes on and off.
+'x': decrease the animation speed during playback
+'z': increase the animation speed during playback
+
+UI for the Camera
+--------------------------------------------------------------------
+'Up': Uparrow key to move the camera towards the origin (ZOOM in)
+'Down': Down arrow key to move the camera backwards (ZOOM out)
+'Left': Left arrow key to rotate the camera to the left around origin.
+'Right': Right arrow key to rotate the camera to the right around origin.
+
+Exit the program with 'q', 'Q', or the Esc key.
